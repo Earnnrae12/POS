@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ระบบขายของ ตัดสต็อก กำไร</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#1d2330;--mut:#6b7280;--bd:#e3e6eb;--pri:#0f766e;--pos:#15803d;--neg:#b91c1c;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12151b;--card:#1c212b;--tx:#e8eaee;--mut:#98a1b0;--bd:#2c3340;--pri:#2dd4bf;--pos:#4ade80;--neg:#f87171;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#12151b;--card:#1c212b;--tx:#e8eaee;--mut:#98a1b0;--bd:#2c3340;--pri:#2dd4bf;--pos:#4ade80;--neg:#f87171;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:"Noto Sans Thai",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:15px}
+main{max-width:860px;margin:0 auto;padding:16px}
+h1{font-size:20px;margin:4px 0 14px}
+h2{font-size:16px;margin:0 0 10px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}
+.card,.box{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px}
+.box{margin-bottom:14px}
+.k{color:var(--mut);font-size:12px}.v{font-size:20px;font-weight:700;margin-top:2px}
+.pos{color:var(--pos)}.neg{color:var(--neg)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+input,select,button{font:inherit;padding:8px 10px;border-radius:8px;border:1px solid var(--bd);background:var(--bg);color:var(--tx)}
+input{flex:1;min-width:90px}
+button{background:var(--pri);color:#fff;border:0;cursor:pointer;font-weight:600}
+button.sec{background:transparent;color:var(--tx);border:1px solid var(--bd);font-weight:400;padding:4px 8px;font-size:13px}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:right;padding:7px 6px;border-bottom:1px solid var(--bd);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--mut);font-weight:500;font-size:12px}
+.low{color:var(--neg);font-weight:700}
+.msg{font-size:13px;margin-top:8px;min-height:18px}
+.th{width:38px;height:38px;object-fit:cover;border-radius:8px;flex:none;border:1px solid var(--bd)}
+.ph{display:inline-flex;align-items:center;justify-content:center;background:var(--bg);font-size:18px}
+.nm{display:flex;align-items:center;gap:8px}
+.file{padding:8px 10px;border:1px solid var(--bd);border-radius:8px;cursor:pointer;font-size:14px;background:var(--bg)}
+button.sec.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:10px}
+.tile{position:relative;background:var(--bg);border:1px solid var(--bd);border-radius:12px;padding:0;overflow:hidden;cursor:pointer;text-align:left;color:var(--tx);font-weight:400;display:block;width:100%}
+.tile:active{transform:scale(.97)}
+.tile[disabled]{opacity:.45;cursor:not-allowed}
+.tile .im{width:100%;aspect-ratio:1/1;object-fit:cover;display:block}
+.tile .ph{width:100%;height:auto;aspect-ratio:1/1;font-size:44px;border:0;border-radius:0}
+.tile .inf,.tile .tn,.tile .tp{display:block}
+.tile .inf{padding:8px}
+.tile .tn{font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tile .tp{color:var(--pri);font-weight:700}
+.tc{position:absolute;top:6px;left:6px;background:var(--pri);color:#fff;font-size:13px;font-weight:700;padding:2px 8px;border-radius:999px}
+.ci{display:flex;align-items:center;gap:6px;padding:8px 0;border-bottom:1px solid var(--bd)}
+.cn{flex:1;min-width:0;display:flex;flex-direction:column;font-size:14px}
+.cq{width:56px;min-width:0;flex:none;text-align:center;padding:6px 4px}
+.ct{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:10px;font-weight:700;flex-wrap:wrap}
+#payBtn{padding:10px 22px;font-size:16px}
+.tile .ts{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.65);color:#fff;font-size:12px;padding:2px 7px;border-radius:999px}
+</style>
+</head>
+<body>
+<main>
+<h1>📦 ระบบขายของ ตัดสต็อก กำไร</h1>
+
+<div class="cards">
+  <div class="card"><div class="k">ยอดขายรวม</div><div class="v" id="sRev">0</div></div>
+  <div class="card"><div class="k">ต้นทุนที่ขายไป</div><div class="v" id="sCost">0</div></div>
+  <div class="card"><div class="k">กำไรรวม</div><div class="v" id="sProfit">0</div></div>
+  <div class="card"><div class="k">มูลค่าสต็อกคงเหลือ (ทุน)</div><div class="v" id="sStock">0</div></div>
+</div>
+
+<div class="box">
+  <h2>ขายสินค้า</h2>
+  <div class="row">
+    <button class="sec" id="undoBtn">↩ ยกเลิกการขายล่าสุด</button>
+  </div>
+  <div class="msg" id="sellMsg">แตะที่รูปสินค้าเพื่อใส่ตะกร้า เลือกได้หลายอย่าง แล้วกด “ขาย” ครั้งเดียว</div>
+  <div class="grid" id="grid"></div>
+  <div id="cart"></div>
+</div>
+
+<div class="box">
+  <h2>เพิ่ม / เติมสินค้า</h2>
+  <div class="row">
+    <input id="pName" placeholder="ชื่อสินค้า" style="flex:2">
+    <input id="pCost" type="number" min="0" step="any" placeholder="ต้นทุน/ชิ้น">
+    <input id="pPrice" type="number" min="0" step="any" placeholder="ราคาขาย/ชิ้น">
+    <input id="pQty" type="number" min="0" placeholder="จำนวน">
+    <label class="file">📷 รูป<input id="pImg" type="file" accept="image/*" hidden></label>
+    <button id="addBtn">บันทึก</button>
+  </div>
+  <div class="msg" id="addMsg">ถ้าชื่อซ้ำกับของเดิม ระบบจะเติมสต็อก และคำนวณต้นทุนเฉลี่ยถ่วงน้ำหนักให้</div>
+</div>
+
+<div class="box">
+  <h2>สต็อกสินค้า</h2>
+  <div class="tw"><table>
+    <thead><tr><th>สินค้า</th><th>คงเหลือ</th><th>ต้นทุน</th><th>ราคาขาย</th><th>กำไร/ชิ้น</th><th></th></tr></thead>
+    <tbody id="stockBody"></tbody>
+  </table></div>
+</div>
+
+<div class="box">
+  <h2>รายงานสรุปการขาย</h2>
+  <div class="row" style="margin-bottom:8px"><button class="sec on" id="tabDay">รายวัน</button><button class="sec" id="tabMonth">รายเดือน</button></div>
+  <div class="tw"><table>
+    <thead><tr><th>ช่วงเวลา</th><th>บิล</th><th>จำนวน</th><th>ยอดขาย</th><th>ต้นทุน</th><th>กำไร</th><th>%</th></tr></thead>
+    <tbody id="repBody"></tbody>
+  </table></div>
+</div>
+
+<div class="box">
+  <h2>ประวัติการขาย</h2>
+  <div class="tw"><table>
+    <thead><tr><th>วันที่</th><th>สินค้า</th><th>จำนวน</th><th>ยอดขาย</th><th>ต้นทุน</th><th>กำไร</th></tr></thead>
+    <tbody id="saleBody"></tbody>
+  </table></div>
+  <div class="row" style="margin-top:10px"><button class="sec" id="resetBtn">ล้างข้อมูลทั้งหมด</button></div>
+</div>
+</main>
+
+<script>
+var KEY = "stock-app-v1";
+var db = { products: [], sales: [] };
+try { var raw = localStorage.getItem(KEY); if (raw) db = JSON.parse(raw); } catch (e) {}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(db)); } catch (e) {} }
+function $(id) { return document.getElementById(id); }
+function fmt(n) { return "฿" + (Math.round(n * 100) / 100).toLocaleString("th-TH"); }
+function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+function render() {
+  var rev = 0, cost = 0, stock = 0;
+  db.sales.forEach(function (s) { rev += s.rev; cost += s.cost; });
+  db.products.forEach(function (p) { stock += p.qty * p.cost; });
+  $("sRev").textContent = fmt(rev);
+  $("sCost").textContent = fmt(cost);
+  var pr = rev - cost;
+  $("sProfit").textContent = fmt(pr);
+  $("sProfit").className = "v " + (pr >= 0 ? "pos" : "neg");
+  $("sStock").textContent = fmt(stock);
+  renderReport();
+
+  $("grid").innerHTML = db.products.map(function (p, i) {
+    return '<button class="tile" data-sell="' + i + '"' + (p.qty < 1 ? " disabled" : "") + ">" +
+      (p.img ? '<img class="im" src="' + p.img + '" alt="">' : '<span class="th ph">📦</span>') +
+      (cart[p.name] ? '<span class="tc">ตะกร้า ' + cart[p.name] + '</span>' : "") + '<span class="ts">เหลือ ' + p.qty + '</span><span class="inf"><span class="tn">' + esc(p.name) + '</span><span class="tp">' + fmt(p.price) + "</span></span></button>";
+  }).join("") || '<div class="k">ยังไม่มีสินค้า เพิ่มสินค้าด้านล่างก่อน</div>';
+  renderCart();
+
+  $("stockBody").innerHTML = db.products.map(function (p, i) {
+    var m = p.price - p.cost;
+    return '<tr><td><div class="nm">' + thumb(p.img) + esc(p.name) + '</div></td><td class="' + (p.qty <= 3 ? "low" : "") + '">' + p.qty + "</td><td>" + fmt(p.cost) +
+      "</td><td>" + fmt(p.price) + '</td><td class="' + (m >= 0 ? "pos" : "neg") + '">' + fmt(m) +
+      '</td><td><button class="sec" data-del="' + i + '">ลบ</button></td></tr>';
+  }).join("") || '<tr><td colspan="6" style="text-align:center;color:var(--mut)">ยังไม่มีสินค้า</td></tr>';
+
+  $("saleBody").innerHTML = db.sales.slice().reverse().slice(0, 100).map(function (s) {
+    var p = s.rev - s.cost;
+    return "<tr><td>" + esc(s.date) + "</td><td>" + esc(s.name) + "</td><td>" + s.qty + "</td><td>" + fmt(s.rev) +
+      "</td><td>" + fmt(s.cost) + '</td><td class="' + (p >= 0 ? "pos" : "neg") + '">' + fmt(p) + "</td></tr>";
+  }).join("") || '<tr><td colspan="6" style="text-align:center;color:var(--mut)">ยังไม่มีรายการขาย</td></tr>';
+}
+
+
+
+$("addBtn").addEventListener("click", function () {
+  var name = $("pName").value.trim();
+  var cost = parseFloat($("pCost").value), price = parseFloat($("pPrice").value), qty = parseInt($("pQty").value, 10);
+  if (!name || isNaN(cost) || isNaN(price) || isNaN(qty) || qty < 0) { $("addMsg").textContent = "กรอกข้อมูลให้ครบ"; return; }
+  var ex = db.products.filter(function (p) { return p.name === name; })[0];
+  if (ex) {
+    var total = ex.qty + qty;
+    if (total > 0) ex.cost = (ex.qty * ex.cost + qty * cost) / total;
+    ex.qty = total; ex.price = price;
+    if (pendingImg) ex.img = pendingImg;
+    $("addMsg").textContent = "เติมสต็อก " + name + " แล้ว (ต้นทุนเฉลี่ยใหม่ " + fmt(ex.cost) + ")";
+  } else {
+    db.products.push({ name: name, cost: cost, price: price, qty: qty, img: pendingImg });
+    $("addMsg").textContent = "เพิ่ม " + name + " แล้ว";
+  }
+  ["pName", "pCost", "pPrice", "pQty", "pImg"].forEach(function (i) { $(i).value = ""; });
+  pendingImg = "";
+  save(); render();
+});
+
+var cart = {};
+function findP(n) { return db.products.filter(function (x) { return x.name === n; })[0]; }
+function setQty(n, q) {
+  var p = findP(n);
+  if (!p) return;
+  if (q > p.qty) { q = p.qty; $("sellMsg").textContent = "สต็อก " + n + " มีแค่ " + p.qty; }
+  if (q <= 0) delete cart[n]; else cart[n] = q;
+  render();
+}
+function renderCart() {
+  Object.keys(cart).forEach(function (n) { if (!findP(n) || !(cart[n] > 0)) delete cart[n]; });
+  var names = Object.keys(cart);
+  if (!names.length) { $("cart").innerHTML = ""; return; }
+  var total = 0, tcost = 0;
+  var rows = names.map(function (n) {
+    var p = findP(n), q = cart[n], e = esc(n);
+    total += q * p.price; tcost += q * p.cost;
+    return '<div class="ci">' + thumb(p.img) + '<div class="cn"><b>' + e + '</b><span class="k">' + fmt(p.price) + " × " + q + " = " + fmt(q * p.price) + "</span></div>" +
+      '<button class="sec" data-dec="' + e + '">−</button><input class="cq" type="number" min="1" max="' + p.qty + '" value="' + q + '" data-q="' + e + '">' +
+      '<button class="sec" data-inc="' + e + '">+</button><button class="sec" data-rm="' + e + '">✕</button></div>';
+  }).join("");
+  $("cart").innerHTML = '<h2 style="margin-top:14px">ตะกร้า</h2>' + rows +
+    '<div class="ct"><span>รวม ' + fmt(total) + ' <span class="k">(กำไร ' + fmt(total - tcost) + ')</span></span><span><button class="sec" id="clrBtn">ล้าง</button> <button id="payBtn">ขาย</button></span></div>';
+}
+function checkout() {
+  var names = Object.keys(cart), bid = Date.now(), rev = 0, cost = 0, items = 0, i;
+  if (!names.length) return;
+  for (i = 0; i < names.length; i++) {
+    var pp = findP(names[i]);
+    if (!pp || cart[names[i]] > pp.qty) { $("sellMsg").textContent = "สต็อกไม่พอ: " + names[i]; return; }
+  }
+  var stamp = new Date().toLocaleString("th-TH", { dateStyle: "short", timeStyle: "short" });
+  names.forEach(function (n) {
+    var p = findP(n), q = cart[n], r = q * p.price, c = q * p.cost;
+    p.qty -= q;
+    db.sales.push({ ts: bid, bid: bid, date: stamp, name: n, qty: q, rev: r, cost: c });
+    rev += r; cost += c; items += q;
+  });
+  cart = {};
+  $("sellMsg").textContent = "ขายแล้ว " + items + " ชิ้น ยอด " + fmt(rev) + " กำไร " + fmt(rev - cost);
+  save(); render();
+}
+$("grid").addEventListener("click", function (e) {
+  var t = e.target.closest ? e.target.closest("[data-sell]") : null;
+  if (!t) return;
+  var p = db.products[t.getAttribute("data-sell")];
+  if (p) { $("sellMsg").textContent = ""; setQty(p.name, (cart[p.name] || 0) + 1); }
+});
+$("cart").addEventListener("click", function (e) {
+  var b = e.target.closest ? e.target.closest("button") : null;
+  if (!b) return;
+  var n;
+  if ((n = b.getAttribute("data-inc")) !== null) setQty(n, (cart[n] || 0) + 1);
+  else if ((n = b.getAttribute("data-dec")) !== null) setQty(n, (cart[n] || 0) - 1);
+  else if ((n = b.getAttribute("data-rm")) !== null) setQty(n, 0);
+  else if (b.id === "clrBtn") { cart = {}; render(); }
+  else if (b.id === "payBtn") checkout();
+});
+$("cart").addEventListener("change", function (e) {
+  var n = e.target.getAttribute("data-q");
+  if (n !== null) setQty(n, parseInt(e.target.value, 10) || 0);
+});
+
+$("undoBtn").addEventListener("click", function () {
+  var i = db.sales.length - 1, last = db.sales[i];
+  if (!last) { $("sellMsg").textContent = "ไม่มีรายการให้ยกเลิก"; return; }
+  var key = last.bid || last.ts || ("x" + i), n = 0;
+  while (i >= 0 && (db.sales[i].bid || db.sales[i].ts || ("x" + i)) === key) {
+    var s = db.sales.pop(), p = findP(s.name);
+    if (p) p.qty += s.qty;
+    n++; i--;
+  }
+  $("sellMsg").textContent = "ยกเลิกการขายล่าสุด (" + n + " รายการ) แล้ว คืนสต็อกให้แล้ว";
+  save(); render();
+});
+
+$("stockBody").addEventListener("click", function (e) {
+  var i = e.target.getAttribute("data-del");
+  if (i === null) return;
+  if (confirm("ลบสินค้า " + db.products[i].name + " ?")) { db.products.splice(i, 1); save(); render(); }
+});
+
+$("resetBtn").addEventListener("click", function () {
+  if (confirm("ล้างข้อมูลทั้งหมด?")) { db = { products: [], sales: [] }; save(); render(); }
+});
+
+var pendingImg = "";
+$("pImg").addEventListener("change", function () {
+  var f = this.files[0];
+  if (!f) { pendingImg = ""; return; }
+  var r = new FileReader();
+  r.onload = function () {
+    var im = new Image();
+    im.onload = function () {
+      var sc = Math.min(1, 320 / Math.max(im.width, im.height));
+      var c = document.createElement("canvas");
+      c.width = Math.round(im.width * sc); c.height = Math.round(im.height * sc);
+      c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
+      pendingImg = c.toDataURL("image/jpeg", 0.75);
+      $("addMsg").textContent = "เลือกรูปแล้ว กด บันทึก เพื่อใช้รูปนี้";
+    };
+    im.src = r.result;
+  };
+  r.readAsDataURL(f);
+});
+
+function thumb(s) { return s ? '<img class="th" src="' + s + '" alt="">' : '<span class="th ph">📦</span>'; }
+
+var repMode = "day";
+function pad(n) { return ("0" + n).slice(-2); }
+function renderReport() {
+  var g = {};
+  db.sales.forEach(function (s) {
+    if (!s.ts) return;
+    var d = new Date(s.ts);
+    var k = d.getFullYear() + "-" + pad(d.getMonth() + 1) + (repMode === "day" ? "-" + pad(d.getDate()) : "");
+    var o = g[k] || (g[k] = { b: {}, q: 0, rev: 0, cost: 0 });
+    o.b[s.bid || s.ts] = 1; o.q += s.qty; o.rev += s.rev; o.cost += s.cost;
+  });
+  var keys = Object.keys(g).sort().reverse();
+  $("repBody").innerHTML = keys.map(function (k) {
+    var o = g[k], p = o.rev - o.cost, pct = o.rev ? (p / o.rev * 100).toFixed(1) : "0.0";
+    var a = k.split("-"), label = repMode === "day" ? a[2] + "/" + a[1] + "/" + a[0] : a[1] + "/" + a[0];
+    return "<tr><td>" + label + "</td><td>" + Object.keys(o.b).length + "</td><td>" + o.q + "</td><td>" + fmt(o.rev) + "</td><td>" + fmt(o.cost) +
+      '</td><td class="' + (p >= 0 ? "pos" : "neg") + '">' + fmt(p) + "</td><td>" + pct + "%</td></tr>";
+  }).join("") || '<tr><td colspan="7" style="text-align:center;color:var(--mut)">ยังไม่มีข้อมูล</td></tr>';
+  $("tabDay").className = "sec" + (repMode === "day" ? " on" : "");
+  $("tabMonth").className = "sec" + (repMode === "month" ? " on" : "");
+}
+$("tabDay").addEventListener("click", function () { repMode = "day"; renderReport(); });
+$("tabMonth").addEventListener("click", function () { repMode = "month"; renderReport(); });
+
+render();
+</script>
+</body>
+</html>
